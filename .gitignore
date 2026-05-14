@@ -3,3 +3,9 @@ Thumbs.db
 *.swp
 .idea/
 .vscode/
+
+# Staging area for the private leftarm Cloudflare Pages site.
+# Personal MDS photos drop here temporarily and get moved to
+# C:\Users\nickh\dev\nick\leftarm\mds\ for the private gated site.
+# NEVER commit - tat/ is a public GitHub Pages repo.
+leftarm/images/
