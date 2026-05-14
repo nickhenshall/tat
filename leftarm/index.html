@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Left arm - concepts</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 24px 16px 80px;
+    background: #0b0b0b;
+    color: #eaeaea;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  header {
+    max-width: 980px;
+    margin: 0 auto 28px;
+    padding: 0 4px;
+  }
+  h1 {
+    margin: 0 0 6px;
+    font-weight: 600;
+    font-size: 1.4rem;
+    letter-spacing: 0.3px;
+  }
+  .sub {
+    margin: 0;
+    color: #888;
+    font-size: 0.9rem;
+  }
+  .gallery {
+    max-width: 980px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+  }
+  .gallery a {
+    display: block;
+    background: #161616;
+    border-radius: 6px;
+    overflow: hidden;
+    aspect-ratio: 1 / 1;
+    cursor: zoom-in;
+  }
+  .gallery img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease;
+  }
+  .gallery a:hover img { transform: scale(1.04); }
+  .empty {
+    grid-column: 1 / -1;
+    padding: 40px 20px;
+    text-align: center;
+    color: #666;
+    border: 1px dashed #2a2a2a;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+  .empty code {
+    background: #1a1a1a;
+    padding: 2px 6px;
+    border-radius: 3px;
+    color: #ccc;
+  }
+  /* lightbox */
+  .lb {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.95);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    cursor: zoom-out;
+    padding: 20px;
+  }
+  .lb.open { display: flex; }
+  .lb img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+  @media (max-width: 600px) {
+    .gallery { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    body { padding: 16px 10px 60px; }
+    h1 { font-size: 1.2rem; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Left arm</h1>
+  <p class="sub">concept references</p>
+</header>
+<div class="gallery" id="gallery"></div>
+<div class="lb" id="lb" onclick="this.classList.remove('open')"><img id="lbImg" alt=""></div>
+<script>
+(async function() {
+  const gallery = document.getElementById('gallery');
+  const lb = document.getElementById('lb');
+  const lbImg = document.getElementById('lbImg');
+  const exts = ['jpg', 'jpeg', 'png', 'webp', 'gif', 'JPG', 'JPEG', 'PNG'];
+  const found = [];
+
+  for (let i = 1; i <= 200; i++) {
+    let url = null;
+    for (const ext of exts) {
+      const candidate = i + '.' + ext;
+      try {
+        const r = await fetch(candidate, { method: 'HEAD', cache: 'no-cache' });
+        if (r.ok) { url = candidate; break; }
+      } catch (e) {}
+    }
+    if (!url) {
+      // allow one gap then stop
+      if (found.length === 0) continue;
+      break;
+    }
+    found.push(url);
+  }
+
+  if (found.length === 0) {
+    gallery.innerHTML = '<div class="empty">Drop image files named <code>1.jpg</code>, <code>2.jpg</code>, <code>3.png</code>... into this folder and push.<br>Page will pick them up automatically in sequence.</div>';
+    return;
+  }
+
+  for (const url of found) {
+    const a = document.createElement('a');
+    a.href = url;
+    a.onclick = (e) => { e.preventDefault(); lbImg.src = url; lb.classList.add('open'); };
+    const img = document.createElement('img');
+    img.src = url;
+    img.loading = 'lazy';
+    img.alt = '';
+    a.appendChild(img);
+    gallery.appendChild(a);
+  }
+})();
+</script>
+</body>
+</html>
